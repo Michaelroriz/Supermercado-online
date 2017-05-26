@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <!-- Set the viewport width to device width for mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="Description" content="" />
+        <meta name="Keywords" content="" />
+        <link rel="icon" type="image/png" href="resources/zest-1/images/favicon.png?1488665353" />
+
+        <title>Home</title>
+
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation-icons.css">
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+
+        <link rel="stylesheet" href="./css/normalize.min.css" />
+        <link rel="stylesheet" href="./css/bootstrap.min.css" />
+        <link rel="stylesheet" href="./css/bootstrap-theme.min.css" />
+        <script src="./js/jquery-3.1.1.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/bootbox.min.js"></script>
+
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/modernizr.foundation.js"></script>
+        <script type="text/javascript" src="js/foundation.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/jquery.sharrre.min.js"></script>
+
+    </head>
+    <body>
+
+        <div class="row">
+            <div class="five columns">
+                <h3>Login</h3>
+                <form if="formLogin" data-ajax-handler="shop:onLogin" data-validation-message="" method="post" action="/login">
+                    <div class="row">
+                        <div class="twelve columns">
+                            <label for="loginEmail">E-mail *</label>
+                            <input type="text" id="loginEmail" value="">
+                            <span class="error">
+                            </span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="twelve columns">
+                            <label for="loginPassword">Senha *</label>
+                            <input type="password" id="loginPassword">
+                            <span class="error">
+                            </span></div>
+                    </div>
+
+                    <input id="buttonLogin" type="submit" class="button" value="Entrar">
+                    <a class="right forgotpass" href="#">Esqueci minha senha</a>
+
+                    <input type="hidden" name="redirect" value="#">
+
+                </form>
+            </div>
+
+            <div class="six columns">
+                <h3>Cadastro</h3>
+
+                <form name="formRegistration" id="formRegistration" data-validation-message="">
+                    <div class="row">
+                        <div class="six columns">
+                            <label for="fullName">Nome completo *</label>
+                            <input id="fullName" type="text" class="text">
+                            <span class="error">
+                            </span></div>
+                        <div class="six columns">
+                            <label for="cpfNumber">CPF *</label>
+                            <input name="cpfNumber" id="cpfNumber" type="text" class="text" maxlength="11" placeholder="888.888.888-88">
+                            <span class="error">
+                            </span></div>
+
+                        <div class="twelve columns">
+                            <label for="email">Email *</label>
+                            <input id="email" type="text" class="text">
+                            <span class="error">
+                            </span></div>
+
+                        <div class="ten columns">
+                            <label for="address">Endereço *</label>
+                            <input id="address" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                        <div class="two columns">
+                            <label for="number">Número *</label>
+                            <input id="number" type="number" class="text">
+                            <span class="error"></span>
+                        </div>
+
+                        <div class="four columns">
+                            <label for="postcode">CEP *</label>
+                            <input id="postcode" type="text" class="text" maxlength="8" placeholder="88888-888">
+                            <span class="error"></span>
+                        </div>
+                        <div class="eight columns">
+                            <label for="compliment">Complemento *</label>
+                            <input id="compliment" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+
+                        <div class="six columns">
+                            <label for="password">Senha *</label>
+                            <input name="password" id="password" type="password" class="text">
+                            <span class="error"></span>
+                        </div>
+                        <div class="six columns">
+                            <label for="confirmationPassword">Confirme sua senha *</label>
+                            <input name="confirmationPassword" id="confirmationPassword" type="password" class="text">
+                            <span class="error"></span>
+                        </div>
+                    </div>
+                    <!-- <input type="checkbox" name="accepts_marketing" id="accepts_marketing" checked=""> Receive promotional emails<br><br> -->
+                    <input type="hidden" name="autologin" value="1">
+                    <input type="hidden" name="redirect" value="#">
+                    <input id="buttonRegister" type="submit" class="button" value="Cadastrar">
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+            //REGISTRATION
+            $(document).ready(function () {
+
+                $("#buttonRegister").click(function (event) {
+
+                    event.preventDefault();
+
+                    if (isRegistrationFormComplete()) {
+
+                        if (areRegistrationPasswordsEqual()) {
+
+                            registerUser();
+                        }
+                        else {
+
+                            bootbox.alert("Senhas não coincidem");
+                        }
+                    }
+                    else {
+
+                        bootbox.alert("Preencha todos os campos");
+                    }
+                });
+
+                $("#buttonLogin").click(function (event) {
+
+                    event.preventDefault();
+
+                    if (isLoginFormComplete()) {
+
+                        loginUser();
+                    }
+                    else {
+
+                        bootbox.alert("Preencha todos os campos");
+                    }
+                });
+            });
+
+            function isRegistrationFormComplete() {
+
+                var valid = true;
+
+                $("#formRegistration input:text").each(function () {
+
+                    if ($(this).attr("id") != "compliment" && $(this).val() == "") {
+
+                        valid = false;
+                    }
+                });
+
+                return valid;
+            }
+
+            function areRegistrationPasswordsEqual() {
+                
+                var password = $("#password").val();
+                var confirmationPassword = $("#confirmationPassword").val();
+
+                if (password === confirmationPassword) {
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            function registerUser() {
+
+                var fullName = $("#fullName").val();
+                var cpfNumber = $("#cpfNumber").val();
+                var email = $("#email").val();
+                var address = $("#address").val();
+                var number = $("#number").val();
+                var postcode = $("#postcode").val();
+                var compliment = $("#compliment").val();
+                var password = $("#password").val();
+                var confirmationPassword = $("#confirmationPassword").val();
+
+                var auth = firebase.auth();
+                var promise = auth.createUserWithEmailAndPassword(email, password);
+
+                promise
+
+                .then(function(user){
+
+                    saveUserDetails();
+                })
+                .catch(function(error) {
+
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                      
+                    if (errorCode == 'auth/weak-password') {
+                        
+                        bootbox.alert('Digite uma senha mais complexa.');
+                      } 
+                    else if (errorCode == 'auth/email-already-in-use') {
+
+                        bootbox.alert('Email já em uso.');
+                    }
+                    else {
+                        
+                        alert(errorMessage);
+                    }
+               });
+            }
+
+            function saveUserDetails() {
+
+                var fullName = $("#fullName").val();
+                var cpfNumber = $("#cpfNumber").val();
+                var email = $("#email").val();
+                var address = $("#address").val();
+                var number = $("#number").val();
+                var postcode = $("#postcode").val();
+                var compliment = $("#compliment").val();
+                var password = $("#password").val();
+                var confirmationPassword = $("#confirmationPassword").val();
+
+                var usersRef = getRef("users");
+
+                var user = {
+
+                    fullName: fullName,
+                    address: address,
+                    email: email,
+                    address: address,
+                    number: number,
+                    postcode: postcode,
+                    compliment: compliment,
+                    password: password,
+                    confirmationPassword: confirmationPassword
+                };
+
+                // usersRef.push(user);
+                usersRef.child(cpfNumber).set(user, function(error) {
+
+                    if (error) {
+
+                        bootbox.alert("Erro ao cadastrar usuário");
+                    }
+                    else {
+
+                        loadPage("main");
+                    }
+                });
+            }
+
+            // function isCpfAvailable() {
+
+            //     var isCpfAvailable = true;
+            //     var cpfNumber = $("#cpfNumber").val();
+
+            //     var usersRef = getRef("users");
+
+            //     usersRef.once("value", function(snapshot) {
+            
+            //         snapshot.forEach(function(childSnapshot) {
+
+            //             var key = childSnapshot.key;
+            //             var data = childSnapshot.val();
+            //             var dataCpf = data.cpfNumber;
+
+            //             console.log(cpfNumber + " " + dataCpf);
+
+            //             if (cpfNumber == dataCpf) {
+
+            //                 isCpfAvailable = false
+            //             }
+            //         });
+            //     }); 
+
+            //     return isCpfAvailable;
+            // }
+
+            //Login
+            function isLoginFormComplete() {
+                
+                var valid = true;
+
+                $("#formLogin input:text").each(function () {
+
+                    if ($(this).val() == "") {
+
+                        valid = false;
+                    }
+                });
+
+                return valid;
+            }
+
+            function loginUser() {
+
+                var email = $("#loginEmail").val();
+                var password = $("#loginPassword").val();
+
+                var auth = firebase.auth();
+                var promise = auth.signInWithEmailAndPassword(email, password);
+
+                promise
+                .then(function(){
+
+                    loadPage("main");
+                })
+                .catch(function(error) {
+
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                      
+                    console.log(errorCode);
+                    if (errorCode == 'auth/wrong-password') {
+                        
+                        bootbox.alert('Senha inválida.');
+                    }
+                    else if (errorCode == "auth/invalid-email" || errorCode == "auth/user-not-found") {
+
+                        bootbox.alert('Email não encontrado.');
+                    }
+               });
+            }
+
+        </script>
+
+    </body>
+</html>

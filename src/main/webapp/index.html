@@ -1,0 +1,218 @@
+﻿
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+    <!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <!-- Set the viewport width to device width for mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="Description" content="" />
+        <meta name="Keywords" content="" />
+        <link rel="icon" type="image/png" href="resources/zest-1/images/favicon.png?1488665353" />
+
+        <title>Home</title>
+
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation-icons.css">
+        <link rel="stylesheet" type="text/css" href="css/search.css">
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/modernizr.foundation.js"></script>
+        <script type="text/javascript" src="js/foundation.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/jquery.sharrre.min.js"></script>
+
+        <!-- start custom theme options -->
+        <style type="text/css">
+            a {
+                color: #DC3E2F;
+            }
+
+            a:hover {
+                color: #9f261b;
+            }
+
+            a.button {
+                background-color: #DC3E2F;
+                border-color: #DC3E2F;
+            }
+
+            a.button:hover {
+                background-color: #b92c1f;
+            }
+
+            .sale i {
+                color: #DC3E2F !important;
+            }
+
+            .sale span.salesign {
+                background-color: #DC3E2F;
+            }
+
+            .banner {
+                background: url('resources/zest-1/images/zest-banner-bg.jpg?1488665353') no-repeat;
+            }
+        </style>
+    </head>
+
+    <body class="body">
+
+        <header>
+        </header>
+        <div class="row">
+            <div id="content" class="content twelve columns">
+            </div>
+        </div>
+        <footer class="row">
+        </footer>
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                //INITIAL SETUP
+                //Load componets
+                $("header").load("header.html");
+                $("#content").load("main.html");
+                $("footer").load("footer.html");
+
+                fetchProducts();
+            });
+
+            function loadPage(page) {
+
+                var isProductPage = (page.split("/")[0] == "product");
+
+                if (isProductPage) {
+
+                    productNumber = page.split("/")[1];
+
+                    $("#content").load("product.html", function(){
+
+                        fetchProduct(productNumber);
+                    });
+                } 
+                else {
+
+                    $("#content").load(page + ".html");
+                }
+            }
+
+        </script>
+
+        <script src="https://www.gstatic.com/firebasejs/3.7.3/firebase.js"></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyA8rr33TlXyHrZG_LAlV65oGU97DRGnvFQ",
+                authDomain: "supermercado-f2dd7.firebaseapp.com",
+                databaseURL: "https://supermercado-f2dd7.firebaseio.com",
+                storageBucket: "supermercado-f2dd7.appspot.com",
+                messagingSenderId: "125011433651"
+            };
+            firebase.initializeApp(config);
+        </script>
+
+        <script type="text/javascript">
+
+            var databaseRef = firebase.database().ref();
+            var storage = firebase.storage();
+            var storageRef = storage.ref();
+            
+            var user;
+            var products = {};
+
+            function getRef(path) {
+
+                return firebase.database().ref(path);
+            }
+
+            $(document).click(function(e) {
+    
+                //If there's a popup open
+                if ($('.searchResults-UI')[0]){
+                    
+                    //If the element clicked is not in a popup
+                    if ($('.searchResults-UI').find(e.target).length === 0) {
+                        
+                        $(".searchResults-UI").remove();
+                    }
+                } 
+            });
+
+            firebase.auth().onAuthStateChanged(firebaseUser => {
+
+                if (firebaseUser) {
+
+                    var email = firebaseUser.email;
+                    fetchUser(email);
+
+                }
+                else {
+
+                    // alert("deslogou");
+                    $("#loginOrRegisterAndLogout").html('<a href="javascript:goToRegistration()">Login / Cadastrar</a>');
+                    
+                }
+            });
+
+            function fetchUser(email) {
+
+                var usersRef = getRef("/users");
+
+                usersRef.once("value", function(snapshot) {
+
+                    snapshot.forEach(function(childSnapshot) {
+
+                        var key = childSnapshot.key;
+                        var data = childSnapshot.val();
+
+                        if (data.email == email) {
+
+                            user = data;
+                            user.cpfNumber = key;
+
+                            startCartListener();
+
+                            var fullName = user.fullName.split(" ");
+                            var firstName = fullName[0];
+
+                            $("#loginOrRegisterAndLogout").html('Olá '+firstName+' (<a href="javascript:logoutUser()">Sair</a>)');
+                        }
+                    });
+                }); 
+
+            }
+
+            function fetchProducts() {
+
+                var productsRef = getRef("/products");
+
+                productsRef.once("value", function(snapshot) {
+
+                    products = {};
+
+                    snapshot.forEach(function(childSnapshot) {
+
+                        var key = childSnapshot.key;
+                        var product = childSnapshot.val();
+                        product.productNumber = key;
+                            
+                        products[key] = product;
+                    });
+
+                    $("#searchText").prop("disabled", false);
+                }); 
+            }
+
+        </script>
+
+    </body>
+</html>

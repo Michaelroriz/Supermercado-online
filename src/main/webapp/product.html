@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+    <!--<![endif]-->
+    <head>
+        <link rel="stylesheet" type="text/css" href="./css/core.css">
+        <link rel="stylesheet" type="text/css" href="./css/foundation.min.css">
+        <link rel="stylesheet" type="text/css" href="./css/foundation-icons.css">
+        <link rel="stylesheet" type="text/css" href="./css/style.css">
+        <script type="text/javascript" src="./js/jquery.js"></script>
+        <script type="text/javascript" src="./js/modernizr.foundation.js"></script>
+        <script type="text/javascript" src="./js/foundation.min.js"></script>
+        <script type="text/javascript" src="./js/app.js"></script>
+        <script type="text/javascript" src="./js/core.js"></script>
+        <script type="text/javascript" src="./js/jquery.sharrre.min.js"></script>
+
+        <!-- start custom theme options -->
+        <style type="text/css">
+            a {
+                color: #DC3E2F;
+            }
+
+            a:hover {
+                color: #9f261b;
+            }
+
+            a.button {
+                background-color: #DC3E2F;
+                border-color: #DC3E2F;
+            }
+
+            a.button:hover {
+                background-color: #b92c1f;
+            }
+
+            .sale i {
+                color: #DC3E2F !important;
+            }
+
+            .sale span.salesign {
+                background-color: #DC3E2F;
+            }
+
+            .banner {
+                background: url('resources/zest-1/images/zest-banner-bg.jpg?1488665353') no-repeat;
+            }
+        </style>
+    </head>
+
+    <body class="body">
+
+        <div class="twelve columns omega">
+            <div id="breadcrumbs-area"><h2 id="productTitle" class="left"></h2></div>
+            <div class="right">          
+                <ul class="mybreadcrumbs">
+                    <li><a href="/category/sunglasses">Bebidas</a></li>
+                    <li class="active" id="productCrumb"><a href="/product/aviator-sunglasses"></a></li>
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="content twelve columns">
+            <form class="custom" onsubmit="return false" method="post" action="/product/aviator-sunglasses">
+                <div class="row" id="product-page"><div class="six columns">
+                        <div class="item-images">
+                            <div class="big-image">
+                                <img id="productImage" src="" alt="Aviator Sunglasses">
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="six columns">
+                        <div class="short-description ">
+                            <h2 class="product-title" id="productName"></h2>        
+                            <div class="price">
+                                <span>
+                                    <i id="productPrice"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <h3>Descrição</h3>
+                                <p id="productDescription"></p>
+                            </div>
+
+
+                            <div class="clearfix">
+
+                            </div>
+
+
+                            <label class="title" for="customDropdown">Quantidade</label>
+                            <div class="row add-to-cart-block">
+                                <div class="four columns">
+                                    <input class="quantity-input" id="quantity" value="1" name="quantity" type="text">
+                                </div>
+                                <div class="four mobile-four columns left">
+                                    <input name="productId" value="10" type="hidden">
+                                    <a class="button" id="buttonAddProduct" >Adicionar ao carrinho</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                                             
+                </div>
+            </form>
+        </div>
+
+        <script type="text/javascript">
+
+            var product;
+
+            $(document).ready(function () {
+
+
+                $("#buttonAddProduct").click(function (event) {
+
+                    addToCart();
+                });
+            });
+
+            function loadProductOnScreen() {
+
+                $("#productTitle").html(product.name);
+                $("#productCrumb").html(product.name);
+                $("#productName").html(product.name);
+                $("#productPrice").html("R$ "+product.price);
+                $("#productDescription").html(product.description);
+                
+                var tangRef = storageRef.child(product.productNumber+'.jpg');
+
+                tangRef.getDownloadURL().then(function(url)                             {
+
+
+                    $("#productImage").attr("src", url);
+
+                  }).catch(function(error) {
+
+                    console.error(error);
+                  });
+
+            }
+
+            function fetchProduct(productNumber) {
+
+                var usersRef = getRef("/products/"+productNumber);
+
+                usersRef.once("value", function(snapshot) {
+
+                    product = snapshot.val();
+
+                    product.productNumber = productNumber;
+
+                    loadProductOnScreen();
+                }); 
+
+            }
+
+            function addToCart() {
+
+                var quantity = Number($("#quantity").val());
+
+                var cart = user.cart;
+
+                if (cart) {
+
+                    var quantityOnCart  = cart[product.productNumber];
+
+                    if (quantityOnCart) {
+
+                        quantity = Number(quantity) + Number(quantityOnCart);
+                    }
+                }
+
+                var cartRef = getRef("users/"+user.cpfNumber+"/cart");
+
+                cartRef.child(product.productNumber).set(quantity, function(error) {
+
+                    if (error) {
+
+                        bootbox.alert("Erro ao cadastrar usuário");
+                    }
+                    else {
+
+                        
+                    }
+                });
+
+            }
+
+        </script>
+
+    </body>
+</html>

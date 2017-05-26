@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <!-- Set the viewport width to device width for mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="Description" content="" />
+        <meta name="Keywords" content="" />
+        <link rel="icon" type="image/png" href="resources/zest-1/images/favicon.png?1488665353" />
+
+        <title>Home</title>
+
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation-icons.css">
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/modernizr.foundation.js"></script>
+        <script type="text/javascript" src="js/foundation.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/jquery.sharrre.min.js"></script>
+    </head>
+    <body>
+
+        <div class="row">
+            <div id="loginOrRegisterAndLogout" class="six columns login" style="color: #2a2a2a"> 
+                <a href="javascript:loadPage('registration')">Login / Cadastrar</a>
+            </div>
+            <div class="six columns">
+                <div class="row">
+                    <div class="seven columns">
+                        <form class="search" method="get" action="#">
+                            <input type="text" id="searchText" value="" placeholder="Buscar&hellip;" disabled="" />
+                        </form>
+                    </div>
+                    <div class="five columns" id="mini-cart">
+                        <a class="button right" href="javascript:loadPage('cart')">
+                            <span id="cartTotalItems">0</span> Itens
+                            <span id="cartTotalPrice">R$0,00</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="four columns logo-container">
+                <a href="javascript:loadPage('main')"><img src="images/logo_placeholder.png" alt="" class="img-rounded"></a>
+            </div>
+            <div class="eight columns header-menu-bar">
+
+                <!-- <ul>
+                    <li><a href="/about">Sobre</a></li>
+                    <li><a href="/contact">Contato</a></li>
+                    <li><a href="#">Sample</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                </ul>
+                -->
+                <ul class="nav-bar">
+                    <li class="has-flyout"><a href="javascript:loadPage('main')">Início</a></li>
+                    <li class="has-flyout  right-border-li">
+                        <a href="#">Comprar</a>
+                        <a class="flyout-toggle" href="#"><span> </span></a>
+                        <ul class="flyout" style="display: none;">
+                            <li><a href="/categoria/alimentos">Alimentação</a></li>
+                            <li><a href="/categoria/bebidas">Bebidas</a></li>
+                            <li><a href="/categoria/bebidas_alcoolicas">Bebidas Alcoólicas</a></li>
+                            <li><a href="/categoria/higiene">Higiene</a></li>
+                            <li><a href="/categoria/limpeza">Limpeza</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="javascript:loadPage('produto')">Sobre</a></li>
+                    <li><a href="/contato">Contato</a></li>
+                    <li class="menu-item-seperator"></li>
+                </ul>
+            </div>
+
+            <div class="header-menu-bar-mobile">
+                <div class="icon"><a href="javascript:void(0)">&#9776;</a></div>
+                <div class="header-menu-bar-mobile-dropdown">
+                    <ul>
+                        <li><a href="javascript:loadPage('main')">Início</a></li>
+                        <li><a href="#">Comprar</a></li>
+                        <li class="mobile-subnav">
+                            <ul>
+                                <li><a href="/categoria/alimentos">Alimentação</a></li>
+                            <li><a href="/categoria/bebidas">Bebidas</a></li>
+                            <li><a href="/categoria/bebidas_alcoolicas">Bebidas Alcoólicas</a></li>
+                            <li><a href="/categoria/higiene">Higiene</a></li>
+                            <li><a href="/categoria/limpeza">Limpeza</a></li>
+                            </ul>
+                        </li>                        
+                    </ul>
+                    <ul><li><a href="/sobre">Sobre</a></li><li><a href="/contato">Contato</a></li></ul>
+                </div>
+            </div>
+
+        </div>
+
+        <script type="text/javascript">
+            
+            $(document).ready(function () {
+
+                $("#searchText").on('keyup', function(e) {
+
+                    search($(this).val());
+                });
+            });
+
+            function logoutUser() {
+
+                firebase.auth().signOut();
+            }
+
+            function goToRegistration() {
+
+                loadPage('registration');
+            }
+
+            function startCartListener() {
+
+                var cartRef = getRef("users/"+user.cpfNumber+"/cart");
+
+                cartRef.on("value", function(snapshot) {
+
+                    cart = snapshot.val();
+
+                    if (cart) {
+
+                        user.cart = cart;
+
+                        var total = 0;
+                        var totalPrice = 0;
+
+                        jQuery.each(cart, function(productNumber, quantity) {
+        
+                            total = total + Number(quantity);
+
+                            var product = products[productNumber];
+                            var productTotal = Number(product.price.replace(",", ".")) * quantity;
+
+                            totalPrice = totalPrice + productTotal;
+                        });
+
+                        totalPrice = Math.round(totalPrice * 100) / 100;
+                        totalPrice = totalPrice.toString().replace(".", ",");
+
+                        $("#cartTotalItems").html(total);
+                        $("#cartTotalPrice").html("R$"+totalPrice);
+                    }
+                    else {
+
+                        $("#cartTotalItems").html("0");
+                        $("#cartTotalPrice").html("R$0,00");
+                    }
+                }); 
+            }
+
+            function search(textToSearch) {
+
+                if (textToSearch.trim().length > 0) {
+
+                    var productsFound = [];
+
+                    jQuery.each(products, function(key, product) {
+        
+                        var index = product.name.toLowerCase().indexOf(textToSearch.toLowerCase());
+
+                        if (index != -1) {
+
+                            productsFound.push(product);
+                        }
+                    });
+
+                    showSearchResults(productsFound);
+                }
+                else {
+
+                    $(".searchResults-UI").remove();
+                }
+            }
+
+            function showSearchResults(results) {
+
+                var position = getElementPosition($("#searchText"));
+
+                //Remove popup if any
+                $(".searchResults-UI").remove();
+
+                //Append HTML
+                var html = '<div id="searchResults" class="searchResults-UI">' +
+                                '<ol id="searchResults-list">' +
+                                '</ol>' +
+                            '</div>';
+
+                $("body").append(html);
+
+                var width = $("#searchText").css("width");
+
+                //Set position
+                $(".searchResults-UI").css({"left": position.x, "top": position.y, "width": width});
+
+                //Setup HTML
+                $(results).each(function(){
+
+                    var product = this;
+
+                    $("#searchResults-list").append('<li><img id="restultImg'+product.productNumber+'" src="'+product.imageUrl+'"><span>'+ product.name +'</span><input type="hidden" value="'+ product.productNumber +'"/></li>');
+                });
+
+                //List is empty
+                if (results.length === 0) {
+
+                    $("#searchResults-list").append("<div style='padding: 20px; text-align: center;'>nenhum resultado</div>");
+                }
+
+                //Prepare click action
+                $("#searchResults-list li").click(function(){
+                
+                    $(".searchResults-UI ol li").removeClass("searchResults-UI-selectedLi");
+                    $(this).addClass("searchResults-UI-selectedLi");
+                    
+                    var key = $(this).find("input:hidden").val();
+
+                    loadPage("product/"+key);
+                    
+                    $(".searchResults-UI").remove();
+                    $("#searchText").val("");
+                });
+            }
+
+            function getElementPosition(element) {
+        
+                //Get element position
+                var offset = $(element).offset();
+                var popupX = Math.round(offset.left); 
+                var popupY = Math.round(offset.top) + 20;
+
+                var position = { x: popupX, y: popupY };
+                
+                return position;
+            }
+
+        </script>
+
+    </body>
+</html>
