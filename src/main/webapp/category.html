@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+    <!--<![endif]-->
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation-icons.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/modernizr.foundation.js"></script>
+        <script type="text/javascript" src="js/foundation.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/jquery.sharrre.min.js"></script>
+
+        <!-- start custom theme options -->
+        <style type="text/css">
+            a {
+                color: #DC3E2F;
+            }
+
+            a:hover {
+                color: #9f261b;
+            }
+
+            a.button {
+                background-color: #DC3E2F;
+                border-color: #DC3E2F;
+            }
+
+            a.button:hover {
+                background-color: #b92c1f;
+            }
+
+            .sale i {
+                color: #DC3E2F !important;
+            }
+
+            .sale span.salesign {
+                background-color: #DC3E2F;
+            }
+
+            .banner {
+                background: url('images/bg.jpg?1488665353') no-repeat;
+            }
+
+            .table-header {
+                background: #DC3E2F;
+                color: white;
+                height: 40px;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+            }
+
+            .table-cell {
+                border-width: 1px;
+                border-style: solid;
+                border-color: #DC3E2F;
+                margin-top: 5px !important;
+                height: 100px;
+                display: flex;
+                align-items: center;
+            }
+
+            .table-cell div {
+
+                display: flex;
+                align-items: center;
+            }
+
+            .cartImage {
+                width: 80px;
+                height: 80px;
+                margin: 10px;
+            }
+        </style>
+    </head>
+
+    <body class="body">
+        <form class="custom" method="post" action="/cart">
+            <div id="category-content">
+                
+            </div>
+        </form>
+
+        <script type="text/javascript">
+
+        function fetchCategory(category) {
+
+            var headerHtml = `
+                        <div class="row table-header">
+                            <div class="six columns">Produto(s)</div>
+                            <div class="two columns"></div>
+                            <div class="two columns">Estoque</div>
+                            <div class="two columns">Valor</div>
+                        </div>`;
+
+            $("#category-content").append(headerHtml);
+
+            jQuery.each(products, function(productNumber, product) {
+
+                if (product.category == category) {
+                    
+                    var productHtml = `
+                
+                        <a href="javascript:loadPage('product/`+productNumber+`')">
+                            <div class="row table-cell">
+                                <div class="six columns">
+                                    <img class='cartImage' id="image`+productNumber+`" src="`+product.imageUrl+`">`+product.name+`
+                                </div>
+                                <div class="two columns"></div>
+                                <div class="two columns">`+product.stock+`</div>
+                                <div class="two columns" id="price`+productNumber+`">R$ `+product.price+`</div>
+                            </div>
+                        </a>
+                        `;
+
+                    $("#category-content").append(productHtml);
+                }
+            });
+        }
+
+        function changeCart(productNumber, quantity) {
+
+            var cartRef = getRef("users/"+user.cpfNumber+"/cart");
+
+            cartRef.child(productNumber).set(quantity, function(error) {
+
+                if (error) {
+
+                    bootbox.alert("Erro ao cadastrar usuário");
+                }
+                else {
+
+                    
+                }
+            });
+
+        }
+
+        </script>
+
+    </body>
+</html>

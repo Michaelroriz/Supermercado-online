@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <!-- Set the viewport width to device width for mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="Description" content="" />
+        <meta name="Keywords" content="" />
+        <link rel="icon" type="image/png" href="resources/zest-1/images/favicon.png?1488665353" />
+
+        <title>Home</title>
+
+        <link rel="stylesheet" type="text/css" href="css/core.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
+        <link rel="stylesheet" type="text/css" href="css/foundation-icons.css">
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+
+        <link rel="stylesheet" href="./css/normalize.min.css" />
+        <link rel="stylesheet" href="./css/bootstrap.min.css" />
+        <link rel="stylesheet" href="./css/bootstrap-theme.min.css" />
+        <script src="./js/jquery-3.1.1.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+        <script src="./js/bootbox.min.js"></script>
+
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/modernizr.foundation.js"></script>
+        <script type="text/javascript" src="js/foundation.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/jquery.sharrre.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+
+    </head>
+    <body>
+
+        <div class="row">
+            
+
+            <div class="six columns">
+                <h3>Local de Entrega</h3>
+
+                <form  id="formAddress" data-validation-message="">
+                    <div class="row">
+
+                        <div class="ten columns">
+                            <label for="address">Endereço *</label>
+                            <input id="address" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                        <div class="two columns">
+                            <label for="number">Número *</label>
+                            <input id="number" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                        <div class="four columns">
+                            <label for="postcode">CEP *</label>
+                            <input id="postcode" type="text" class="text" onkeyup="somenteNumeros(this);" maxlength="8" placeholder="88888-888">
+                            <span class="error"></span>
+                        </div>
+                        <div class="eight columns">
+                            <label for="compliment">Complemento *</label>
+                            <input id="compliment" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                    </div>
+                    <!-- <input type="checkbox" name="accepts_marketing" id="accepts_marketing" checked=""> Receive promotional emails<br><br> -->
+                    <input type="hidden" name="autologin" value="1">
+                    <input type="hidden" name="redirect" value="#">
+                    <input id="buttonFinish" type="submit" class="button" value="Prosseguir">
+                </form>
+            </div>
+
+            <div class="six columns">
+                <h3>Pagamento (à vista)</h3>
+
+                <form  id="payment" data-validation-message="">
+                    
+                    <div class="row">
+
+                        <div class="four columns">
+                            <label for="bill">Boleto</label>
+                            <input type="radio" id="bill" name="payment">
+                        </div>
+                        <div class="three columns">
+                            <label for="debit">Cartão (débito)</label>
+                            <input type="radio" id="debit" name="payment">
+                        </div>
+                        <div class="three columns">
+                            <label for="credit">Cartão (crédito)</label>
+                            <input type="radio" id="credit" name="payment">
+                        </div>
+
+
+                    </div>
+
+                    <div class="row" id="paymentDetails" style="display:none">
+
+                        <div class="ten columns">
+                            <label for="address">Número</label>
+                            <input id="address" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                        <div class="two columns">
+                            <label for="number">Cód.</label>
+                            <input id="number" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                        <div class="four columns">
+                            <label for="postcode">Expiração</label>
+                            <input id="postcode" type="text" class="text" onkeyup="somenteNumeros(this);" maxlength="8" placeholder="88888-888">
+                            <span class="error"></span>
+                        </div>
+                        <div class="eight columns">
+                            <label for="compliment">Nome no cartão</label>
+                            <input id="compliment" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                        </div>
+
+                        
+                    </div>
+                    <!-- <input type="checkbox" name="accepts_marketing" id="accepts_marketing" checked=""> Receive promotional emails<br><br> -->
+                    <input type="hidden" name="autologin" value="1">
+                    <input type="hidden" name="redirect" value="#">
+        
+                </form>
+            </div>
+
+        </div>
+        <script type="text/javascript">
+            
+            function somenteNumeros(num) {
+                
+                var er = /[^0-9.]/;
+                er.lastIndex = 0;
+                var campo = num;
+                
+                if (er.test(campo.value)) {
+                    campo.value = "";
+                }
+            }
+
+        </script>
+
+        <script type="text/javascript">
+
+            //REGISTRATION
+            $(document).ready(function () {
+
+                $("#address").val(user.address);
+                $("#number").val(user.number);
+                $("#postcode").val(user.postcode);
+                $("#compliment").val(user.compliment);
+
+                $("#bill").on("click", function(){
+
+                    $("#paymentDetails").hide(300);
+
+                });
+
+                $("#debit").on("click", function(){
+
+                    $("#paymentDetails").show(300);
+
+                });
+
+                $("#credit").on("click", function(){
+
+                    $("#paymentDetails").show(300);
+
+                });
+
+
+                $("#buttonFinish").on("click", function(e){
+
+                    e.preventDefault();
+
+     
+                    var imgData = `data:image/png;base64,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`;
+
+                    var doc = new jsPDF();
+
+                    doc.addImage(imgData, 'JPEG', 10, 10, 20, 10);
+
+                    doc.setFontSize(20);
+                    doc.text(35, 20, "Boleto");
+
+                    var cart = user.cart;
+
+                    var space = 0;
+                    var index = 1
+
+                    var totalPrice = 0;
+
+                    
+                    jQuery.each(cart, function(productNumber, quantity) {
+                
+                        var product = products[productNumber];
+                        var price = product.price.replace(",", ".");
+                        totalPrice = totalPrice + (Number(price) * Number(quantity));
+
+                        doc.setFontSize(8);
+                        doc.text(35, 35 + space, index+ "   *   " +product.name + " ---- "+product.price+" (x"+quantity+")");
+
+                        space = space + 5;
+                        
+                        index++;
+                    });
+
+                    totalPrice = totalPrice.toString().replace(".", ",");
+                    totalPrice = totalPrice.substring(0, totalPrice.indexOf(",") + 3);
+
+                    doc.setFontSize(10);
+                    doc.text(35, 35 + space , "_______________________________________________________");
+                    doc.text(35, 35 + space + 5, "Total: " + totalPrice);
+
+                    doc.save('a4.pdf')
+                });
+            });
+
+            function isRegistrationFormComplete() {
+
+                var valid = true;
+
+                $("#formAddress input:text").each(function () {
+
+                    if ($(this).attr("id") != "compliment" && $(this).val() == "") {
+
+                        valid = false;
+                    }
+                });
+
+                return valid;
+            }
+
+        </script>
+
+    </body>
+</html>

@@ -32,6 +32,7 @@
         <script type="text/javascript" src="js/jquery.sharrre.min.js"></script>
     </head>
     <body>
+
         <div class="row">
             <div class="twelve columns banner"><h2>Ofertas do Dia</h2>
                 
@@ -47,21 +48,7 @@
                     
                     
                     <!-- Wrapper for slides -->
-                    <div class="carousel-inner" role="listbox">
-                        <div class="item active text-center">
-                            <img src="./images/maionese_hellmans.jpg" style="height: 400px" />
-                        </div>
-                        <div class="item text-center">
-                            <img src="./images/papel_higienico.jpg" style="height: 400px" />
-                        </div>
-                        <div class="item text-center">
-                            <img src="#" style="height: 400px" />
-                        </div>
-                        <div class="item text-center">
-                            <img src="#" style="height: 400px" />
-                        </div>
-                        
-                    </div>
+                    <div class="carousel-inner" role="listbox" id="carousel"></div>
                     
 
                     <!-- Controls -->
@@ -80,86 +67,7 @@
         <div class="row product-list">
             <form method="post" action="">
 
-                <ul class="clearfix">
-                    <li class="three columns mobile-two ">
-                        <div class="item">
-                            <div>
-                                <a href="javascript:loadPage('product/-KjVHMdsPDG5aSnuSjmE')"><img src="images/coca-cola225.jpg" width="365" height="365" alt="" title="" /></a>
-                            </div>
-
-                            <div class="short-description">
-                                <h3><a href="javascript:loadPage('produtos/produto1')">Coca-Cola 2,25 L</a></h3>
-
-                                <span>
-                                    <a href="javascript:loadPage('produtos/produto1')">
-                                        <i>
-                                            R$6,99 cada
-                                        </i>
-                                    </a>
-                                </span>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="three columns mobile-two ">
-                        <div class="item">
-                            <div>
-                                <a href="javascript:loadPage('registration')"><img src="images/cafe_extra_forte.jpg" width="365" height="365" alt="" title="" /></a>
-                            </div>
-
-                            <div class="short-description">
-                                <h3><a href="javascript:loadPage('produtos/produto2')">Café Extra Forte</a></h3>
-
-                                <span>
-                                    <a href="javascript:loadPage('produtos/produto2')">
-                                        <i>
-                                            R$8,89 cada
-                                        </i>
-                                    </a>
-                                </span>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="three columns mobile-two sale">
-                        <div class="item">
-                            <div>
-                                <a href="javascript:loadPage('produtos/produto3')"><img src="images/papel_higienico.jpg" width="365" height="365" alt="" title="" /></a>
-                            </div>
-
-                            <div class="short-description">
-                                <h3><a href="javascript:loadPage('produtos/produto3')">Papel Higiênico Neve</a></h3>
-
-                                <span>
-                                    <a href="javascript:loadPage('produtos/produto3')">
-                                        <i>
-                                            <span class="oldprice">R$18,99</span>  R$15,99 
-                                        </i>
-                                    </a>
-                                </span>
-                            </div>
-                            <span class="salesign">Promoção</span>
-                        </div>
-                    </li>
-                    <li class="three columns mobile-two sale">
-                        <div class="item">
-                            <div>
-                                <a href="javascript:loadPage('produtos/produto4')"><img src="images/maionese_hellmans.jpg" width="365" height="365" alt="" title="" /></a>
-                            </div>
-
-                            <div class="short-description">
-                                <h3><a href="javascript:loadPage('produtos/produto4')">Maionese Hellmann's</a></h3>
-
-                                <span>
-                                    <a href="javascript:loadPage('produtos/produto4')">
-                                        <i>
-                                            <span class="oldprice">R$4,99</span>                        R$3,59
-                                        </i>
-                                    </a>
-                                </span>
-                            </div>
-                            <span class="salesign">Promoção</span>
-                        </div>
-                    </li>
-                </ul>
+                <ul id="itemList" class="clearfix"></ul>
 
             </form>
         </div>
@@ -184,6 +92,103 @@
             </div>
         </div>
 
+        <script type="text/javascript">
+            
+            $("document").ready(function(){
 
+                if (Object.keys(products).length > 0) {
+
+                    updateMainProducts();
+                    updateCarousel();
+                }
+            });
+
+            function updateMainProducts() {
+
+                var randomProducts = {};
+
+                while (Object.keys(randomProducts).length < 4) {
+
+                    var randomProductNumber = pickRandomProperty(products);
+
+                    var isInArray = randomProducts[randomProductNumber];
+
+                    if (!isInArray) {
+
+                        var product = products[randomProductNumber];
+                        randomProducts[randomProductNumber] = product;
+                    }
+                }
+
+                jQuery.each(randomProducts, function(productNumber, product) {
+
+                    var html = `
+                            <li class="three columns mobile-two">
+                                <div class="item">
+                                    <div style="height: 220px">
+                                        <a href="javascript:loadPage('product/`+product.productNumber+`')"><img src="`+product.imageUrl+`" style="border: 0px !important" width="365" height="365" alt="" title="" /></a>
+                                    </div>
+
+                                    <div class="short-description">
+                                        <h3><a href="javascript:loadPage('product/`+product.productNumber+`')">`+product.name.substring(0, 22)+`...</a></h3>
+
+                                        <span>
+                                            <a href="javascript:loadPage('product/`+product.productNumber+`')">
+                                                <i>
+                                                    `+product.price+` cada
+                                                </i>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                            `;
+
+                        $("#itemList").append(html);
+                });
+            }
+
+            function updateCarousel() {
+
+                var randomProducts = {};
+
+                while (Object.keys(randomProducts).length < 4) {
+
+                    var randomProductNumber = pickRandomProperty(products);
+
+                    var isInArray = randomProducts[randomProductNumber];
+
+                    if (!isInArray) {
+
+                        var product = products[randomProductNumber];
+                        randomProducts[randomProductNumber] = product;
+                    }
+                }
+
+                var firstItem = true;
+
+                jQuery.each(randomProducts, function(productNumber, product) {
+
+                    var active = (firstItem) ? "active" : "";
+
+                    var html = `
+                            
+                                <div class="item `+active+` text-center">
+                                    <a href="javascript:loadPage('product/`+product.productNumber+`')">
+                                        <div class="row">
+                                            <img class="four columns" src="`+product.imageUrl+`" style="height: 300px; margin-top:25px; margin-bottom: 25px"/>
+                                            <h2 style="margin-top: 100px">`+product.name+` (R$`+product.price+`)</h2>
+                                        </div>
+                                    </a>
+                                </div>
+                            `;
+
+                    $("#carousel").append(html);
+
+                    firstItem = false;
+                });
+            }
+
+        </script>
     </body>
 </html>

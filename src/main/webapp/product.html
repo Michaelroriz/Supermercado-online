@@ -55,7 +55,7 @@
             <div id="breadcrumbs-area"><h2 id="productTitle" class="left"></h2></div>
             <div class="right">          
                 <ul class="mybreadcrumbs">
-                    <li><a href="/category/sunglasses">Bebidas</a></li>
+                    <li id="breadcumb"></li>
                     <li class="active" id="productCrumb"><a href="/product/aviator-sunglasses"></a></li>
                 </ul>
             </div>
@@ -67,7 +67,7 @@
                 <div class="row" id="product-page"><div class="six columns">
                         <div class="item-images">
                             <div class="big-image">
-                                <img id="productImage" src="" alt="Aviator Sunglasses">
+                                <img id="productImage" src="">
                             </div>
 
 
@@ -95,7 +95,7 @@
                             <label class="title" for="customDropdown">Quantidade</label>
                             <div class="row add-to-cart-block">
                                 <div class="four columns">
-                                    <input class="quantity-input" id="quantity" value="1" name="quantity" type="text">
+                                    <input class="quantity-input" id="quantity" value="1" name="quantity" type="number">
                                 </div>
                                 <div class="four mobile-four columns left">
                                     <input name="productId" value="10" type="hidden">
@@ -119,46 +119,82 @@
 
                     addToCart();
                 });
+
+                $("#quantity").on('keyup', function(e) {
+
+                    if (!$(this).val()) {
+
+                        $(this).val("1");
+                    }
+                });
+
+                $("#quantity").change(function(){
+
+                    var quantity = $(this).val();
+
+                    if (quantity == "0") { 
+
+                        $(this).val("1");
+                        return; 
+                    }
+                });
             });
 
             function loadProductOnScreen() {
 
+                var breadcumb = `<a href="javascript:loadPage('category/`+product.category+`')">`+product.category+`</a>`;
+
+                $("#breadcumb").html(breadcumb);
                 $("#productTitle").html(product.name);
                 $("#productCrumb").html(product.name);
                 $("#productName").html(product.name);
                 $("#productPrice").html("R$ "+product.price);
                 $("#productDescription").html(product.description);
-                
-                var tangRef = storageRef.child(product.productNumber+'.jpg');
+                $("#productImage").attr("src", product.imageUrl);
 
-                tangRef.getDownloadURL().then(function(url)                             {
+                // var tangRef = storageRef.child(product.productNumber+'.jpg');
+
+                // tangRef.getDownloadURL().then(function(url)                             {
 
 
-                    $("#productImage").attr("src", url);
+                //     $("#productImage").attr("src", url);
 
-                  }).catch(function(error) {
+                //   }).catch(function(error) {
 
-                    console.error(error);
-                  });
+                //     console.error(error);
+                //   });
 
             }
 
             function fetchProduct(productNumber) {
 
-                var usersRef = getRef("/products/"+productNumber);
+                var selectedProduct = products[productNumber];
 
-                usersRef.once("value", function(snapshot) {
+                product = selectedProduct;
 
-                    product = snapshot.val();
+                loadProductOnScreen();
 
-                    product.productNumber = productNumber;
+                // var usersRef = getRef("/products/"+productNumber);
 
-                    loadProductOnScreen();
-                }); 
+                // usersRef.once("value", function(snapshot) {
+
+                //     product = snapshot.val();
+
+                //     product.productNumber = productNumber;
+
+                //     loadProductOnScreen();
+                // }); 
 
             }
 
             function addToCart() {
+
+                if (!user) {
+
+                    loadPage("registration");
+
+                    return;
+                }
 
                 var quantity = Number($("#quantity").val());
 
@@ -194,3 +230,4 @@
 
     </body>
 </html>
+

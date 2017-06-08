@@ -36,8 +36,8 @@
                             <input type="text" id="searchText" value="" placeholder="Buscar&hellip;" disabled="" />
                         </form>
                     </div>
-                    <div class="five columns" id="mini-cart">
-                        <a class="button right" href="javascript:loadPage('cart')">
+                    <div class="five columns">
+                        <a id="cart-link" class="button right disabled" href="javascript:loadPage('cart')">
                             <span id="cartTotalItems">0</span> Itens
                             <span id="cartTotalPrice">R$0,00</span>
                         </a>
@@ -50,7 +50,7 @@
             <div class="four columns logo-container">
                 <a href="javascript:loadPage('main')"><img src="images/logo_placeholder.png" alt="" class="img-rounded"></a>
             </div>
-            <div class="eight columns header-menu-bar">
+            <div id="menu" class="eight columns header-menu-bar" style="display:none">
 
                 <!-- <ul>
                     <li><a href="/about">Sobre</a></li>
@@ -62,19 +62,22 @@
                 <ul class="nav-bar">
                     <li class="has-flyout"><a href="javascript:loadPage('main')">Início</a></li>
                     <li class="has-flyout  right-border-li">
-                        <a href="#">Comprar</a>
-                        <a class="flyout-toggle" href="#"><span> </span></a>
+                        <a href="#">Categorias</a>
+                        
                         <ul class="flyout" style="display: none;">
-                            <li><a href="/categoria/alimentos">Alimentação</a></li>
-                            <li><a href="/categoria/bebidas">Bebidas</a></li>
-                            <li><a href="/categoria/bebidas_alcoolicas">Bebidas Alcoólicas</a></li>
-                            <li><a href="/categoria/higiene">Higiene</a></li>
-                            <li><a href="/categoria/limpeza">Limpeza</a></li>
+                            <li><a href="javascript:loadPage('category/Alimentos')">Alimentos</a></li>
+                            <li><a href="javascript:loadPage('category/Bebidas')">Bebidas</a></li>
+                            <li><a href="javascript:loadPage('category/Produtos de Limpeza')">Produtos de Limpeza</a></li>
+                            <li><a href="javascript:loadPage('category/Higiene')">Higiene</a></li>
+                            <li><a href="javascript:loadPage('category/Perfumaria')">Perfumaria</a></li>
+                            <li><a href="javascript:loadPage('category/Jogos')">Jogos</a></li>
+                            <li><a href="javascript:loadPage('category/Remédios')">Remédios</a></li>
+                            <li><a href="javascript:loadPage('category/Tabacaria')">Tabacaria</a></li>
                         </ul>
                     </li>
 
-                    <li><a href="javascript:loadPage('produto')">Sobre</a></li>
-                    <li><a href="/contato">Contato</a></li>
+                    <li><a href="javascript:loadPage('about')">Sobre</a></li>
+                    <li><a href="javascript:loadPage('contact')">Contato</a></li>
                     <li class="menu-item-seperator"></li>
                 </ul>
             </div>
@@ -84,18 +87,17 @@
                 <div class="header-menu-bar-mobile-dropdown">
                     <ul>
                         <li><a href="javascript:loadPage('main')">Início</a></li>
-                        <li><a href="#">Comprar</a></li>
+                        <li><a href="#">Categorias</a></li>
                         <li class="mobile-subnav">
                             <ul>
                                 <li><a href="/categoria/alimentos">Alimentação</a></li>
                             <li><a href="/categoria/bebidas">Bebidas</a></li>
-                            <li><a href="/categoria/bebidas_alcoolicas">Bebidas Alcoólicas</a></li>
                             <li><a href="/categoria/higiene">Higiene</a></li>
                             <li><a href="/categoria/limpeza">Limpeza</a></li>
                             </ul>
                         </li>                        
                     </ul>
-                    <ul><li><a href="/sobre">Sobre</a></li><li><a href="/contato">Contato</a></li></ul>
+                    <ul><li><a href="javascript:loadPage('about')">Sobre</a></li><li><a href="javascript:loadPage('contact')">Contato</a></li></ul>
                 </div>
             </div>
 
@@ -107,18 +109,48 @@
 
                 $("#searchText").on('keyup', function(e) {
 
-                    search($(this).val());
+                    if(e.which == 13) {
+
+                        e.preventDefault();
+
+                        var productsFound = search($(this).val());
+
+                        $("#content").load("search.html", function(){
+
+                            fetchSearch(productsFound);
+                            $(".searchResults-UI").remove();
+                            $("#searchText").val("");
+                        });
+                    }
+                    else {
+
+                        var productsFound = search($(this).val());
+                        showSearchResults(productsFound);
+                    }
                 });
             });
 
             function logoutUser() {
 
                 firebase.auth().signOut();
+                location.reload(); 
             }
 
             function goToRegistration() {
 
                 loadPage('registration');
+            }
+
+            function goToProfile() {
+
+                if (user.isAdmin) {
+
+                    loadPage('backoffice');
+                }
+                else {
+
+                    loadPage('profile');
+                }
             }
 
             function startCartListener() {
@@ -176,7 +208,7 @@
                         }
                     });
 
-                    showSearchResults(productsFound);
+                    return productsFound;
                 }
                 else {
 

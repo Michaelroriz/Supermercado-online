@@ -54,8 +54,7 @@
                             </span></div>
                     </div>
 
-                    <input id="buttonLogin" type="submit" class="button" value="Entrar">
-                    <a class="right forgotpass" href="#">Esqueci minha senha</a>
+                    <input id="buttonLogin" type="submit" class="button" value="Entrar">                    
 
                     <input type="hidden" name="redirect" value="#">
 
@@ -74,7 +73,7 @@
                             </span></div>
                         <div class="six columns">
                             <label for="cpfNumber">CPF *</label>
-                            <input name="cpfNumber" id="cpfNumber" type="text" class="text" maxlength="11" placeholder="888.888.888-88">
+                            <input name="cpfNumber" id="cpfNumber" type="text" class="text" onkeyup="somenteNumeros(this);" maxlength="11" placeholder="888.888.888-88">
                             <span class="error">
                             </span></div>
 
@@ -91,13 +90,23 @@
                         </div>
                         <div class="two columns">
                             <label for="number">Número *</label>
-                            <input id="number" type="number" class="text">
+                            <input id="number" type="text" class="text">
+                            <span class="error"></span>
+                        </div>
+                         <div class="six columns">
+                            <label for="telephone">Telefone *</label>
+                            <input id="telephone" type="text" class="text" onkeyup="somenteNumeros(this);" maxlength="10" placeholder="(88)8888-8888">
+                            <span class="error"></span>
+                        </div>
+                         <div class="six columns">
+                            <label for="cellphone">Celular *</label>
+                            <input id="cellphone" type="text" class="text" onkeyup="somenteNumeros(this);" maxlength="11" placeholder="(88)88888-8888">
                             <span class="error"></span>
                         </div>
 
                         <div class="four columns">
                             <label for="postcode">CEP *</label>
-                            <input id="postcode" type="text" class="text" maxlength="8" placeholder="88888-888">
+                            <input id="postcode" type="text" class="text" onkeyup="somenteNumeros(this);" maxlength="8" placeholder="88888-888">
                             <span class="error"></span>
                         </div>
                         <div class="eight columns">
@@ -124,6 +133,20 @@
                 </form>
             </div>
         </div>
+        <script type="text/javascript">
+            
+            function somenteNumeros(num) {
+                
+                var er = /[^0-9.]/;
+                er.lastIndex = 0;
+                var campo = num;
+                
+                if (er.test(campo.value)) {
+                    campo.value = "";
+                }
+            }
+
+        </script>
 
         <script type="text/javascript">
 
@@ -201,6 +224,8 @@
                 var email = $("#email").val();
                 var address = $("#address").val();
                 var number = $("#number").val();
+                var telephone = $("#telephone").val();
+                var cellphone = $("#cellphone").val();
                 var postcode = $("#postcode").val();
                 var compliment = $("#compliment").val();
                 var password = $("#password").val();
@@ -242,6 +267,8 @@
                 var email = $("#email").val();
                 var address = $("#address").val();
                 var number = $("#number").val();
+                var telephone = $("#telephone").val();
+                var cellphone = $("#cellphone").val();
                 var postcode = $("#postcode").val();
                 var compliment = $("#compliment").val();
                 var password = $("#password").val();
@@ -256,6 +283,8 @@
                     email: email,
                     address: address,
                     number: number,
+                    telephone: telephone,
+                    cellphone: cellphone,
                     postcode: postcode,
                     compliment: compliment,
                     password: password,

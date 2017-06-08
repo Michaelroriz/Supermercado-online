@@ -46,6 +46,37 @@
             .banner {
                 background: url('images/bg.jpg?1488665353') no-repeat;
             }
+
+            .table-header {
+                background: #DC3E2F;
+                color: white;
+                height: 40px;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+            }
+
+            .table-cell {
+                border-width: 1px;
+                border-style: solid;
+                border-color: #DC3E2F;
+                margin-top: 5px !important;
+                height: 100px;
+                display: flex;
+                align-items: center;
+            }
+
+            .table-cell div {
+
+                display: flex;
+                align-items: center;
+            }
+
+            .cartImage {
+                width: 80px;
+                height: 80px;
+                margin: 10px;
+            }
         </style>
     </head>
 
@@ -62,19 +93,132 @@
 
             var cart = user.cart;
 
-            if (!cart || Object.keys(user.cart).length == 0) {
+            if (!cart || Object.keys(cart).length == 0) {
 
-                var html = `<div class="row">
-                    <div class="eigth columns">
-                        <a class="secondary button" href="javascript:loadPage('index')">Seu carrinho de compras1 está vazio! Continue comprando</a>
-                    </div>
-                </div>`;
+                var html = `
+                            <div class="row">
+                                <div class="eigth columns">
+                                    <a class="secondary button" href="javascript:loadPage('index')">Seu carrinho de compras1 está vazio! Continue comprando</a>
+                                </div>
+                            </div>`;
 
                 $("#cart-content").html(html);
             }
+            else {
+
+                var headerHtml = `
+                            <div class="row table-header">
+                                <div class="six columns">Produto(s)</div>
+                                <div class="two columns">Quantidade</div>
+                                <div class="two columns">Remover</div>
+                                <div class="two columns">Valor total</div>
+                            </div>`;
+
+                $("#cart-content").append(headerHtml);
 
                 
+
+                jQuery.each(cart, function(productNumber, quantity) {
+                
+                    var product = products[productNumber];
+
+                    var price = product.price.replace(",", ".");
+                    var totalPrice = Number(quantity) * Number(price);
+                    totalPrice = totalPrice.toString().replace(".", ",");
+                    totalPrice = totalPrice.substring(0, totalPrice.indexOf(",") + 3);
+
+                    var productHtml = `
+                            <div class="row table-cell">
+                                <div class="six columns">
+                                    <img class='cartImage' id="image`+productNumber+`" src="`+product.imageUrl+`">`+product.name+`
+                                </div>
+                                <div class="two columns">
+                                    <input class='productNumber' type="number" id="quantity`+productNumber+`" value="`+quantity+`" data-productnumber="`+productNumber+`" style="width: 55px">
+                                </div>
+                                <div class="two columns">
+                                    <a class="button right" href="javascript:loadPage('cart')">
+                                        <span class="removeButton" data-productnumber="`+productNumber+`">Remover</span>
+                                    </a>
+                                </div>
+                                <div class="two columns" id="totalPrice`+productNumber+`">R$ `+totalPrice+`</div>
+                            </div>`;
+
+                    $("#cart-content").append(productHtml);
+                });
+
+                var buyButton = `
+                                <a style="margin-top: 30px;" class="button right" href="javascript:loadPage('location')">
+                                    <span id="buyButton">Prosseguir</span>
+                                </a>
+                                `;
+
+                $("#cart-content").append(buyButton);
+            }
+
+            $(".removeButton").on("click", function(e){
+
+                e.preventDefault();
+
+                var productNumber = $(this).data("productnumber");
+
+                var cartRef = getRef("users/"+user.cpfNumber+"/cart/"+productNumber);
+
+                cartRef.remove(function(){
+
+                    loadPage("cart");
+                });
+            })
+
+            $(".productNumber").on('keyup', function(e) {
+
+                if (!$(this).val()) {
+
+                    $(this).val("1");
+                }
+            });
+
+            $(".productNumber").change(function(){
+
+                var quantity = $(this).val();
+
+                if (quantity == "0") { 
+
+                    $(this).val("1");
+                    return; 
+                }
+                
+                var productNumber = $(this).data("productnumber");
+
+                var product = products[productNumber];
+
+                var totalPrice = Number(product.price.replace(",", ".")) * Number(quantity);
+                totalPrice = totalPrice.toString().replace(".", ",");
+                totalPrice = totalPrice.substring(0, totalPrice.indexOf(",") + 3);
+
+                $("#totalPrice"+productNumber).html("R$ " + totalPrice);
+
+                changeCart(productNumber, quantity);
+                
+            });    
         });
+
+        function changeCart(productNumber, quantity) {
+
+            var cartRef = getRef("users/"+user.cpfNumber+"/cart");
+
+            cartRef.child(productNumber).set(quantity, function(error) {
+
+                if (error) {
+
+                    bootbox.alert("Erro ao cadastrar usuário");
+                }
+                else {
+
+                    
+                }
+            });
+
+        }
 
         </script>
 

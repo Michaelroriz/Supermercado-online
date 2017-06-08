@@ -13,7 +13,7 @@
         <meta name="Keywords" content="" />
         <link rel="icon" type="image/png" href="resources/zest-1/images/favicon.png?1488665353" />
 
-        <title>Home</title>
+        <title>Mercad@o</title>
 
         <link rel="stylesheet" type="text/css" href="css/core.css">
         <link rel="stylesheet" type="text/css" href="css/foundation.min.css">
@@ -21,7 +21,9 @@
         <link rel="stylesheet" type="text/css" href="css/search.css">
 
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="shortcut icon" href="images/logo_ico.ico">
 
+</head>
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/modernizr.foundation.js"></script>
         <script type="text/javascript" src="js/foundation.min.js"></script>
@@ -89,16 +91,26 @@
             function loadPage(page) {
 
                 var isProductPage = (page.split("/")[0] == "product");
+                var isCategoryPage = (page.split("/")[0] == "category");
 
                 if (isProductPage) {
 
-                    productNumber = page.split("/")[1];
+                    var productNumber = page.split("/")[1];
 
                     $("#content").load("product.html", function(){
 
                         fetchProduct(productNumber);
                     });
-                } 
+                }
+                else if (isCategoryPage) {
+
+                    var category = page.split("/")[1];
+
+                    $("#content").load("category.html", function(){
+
+                        fetchCategory(category);
+                    });
+                }
                 else {
 
                     $("#content").load(page + ".html");
@@ -184,7 +196,7 @@
                             var fullName = user.fullName.split(" ");
                             var firstName = fullName[0];
 
-                            $("#loginOrRegisterAndLogout").html('Olá '+firstName+' (<a href="javascript:logoutUser()">Sair</a>)');
+                            $("#loginOrRegisterAndLogout").html('Olá <a href="javascript:goToProfile()">'+firstName+'</a>   (<a href="javascript:logoutUser()">Sair</a>)');
                         }
                     });
                 }); 
@@ -209,7 +221,22 @@
                     });
 
                     $("#searchText").prop("disabled", false);
+                    $("#cart-link").removeClass("disabled");
+                    $("#menu").show(300);
+
+                    updateMainProducts();
+                    updateCarousel();
                 }); 
+            }
+
+            function pickRandomProperty(obj) {
+               
+                var result;
+                var count = 0;
+                for (var prop in obj)
+                    if (Math.random() < 1/++count)
+                       result = prop;
+                return result;
             }
 
         </script>
